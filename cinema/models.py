@@ -98,14 +98,12 @@ class Ticket(models.Model):
 
     def clean(self):
         Ticket.validate_ticket(
-            self.row,
-            self.seat,
-            self.movie_session.cinema_hall,
-            ValidationError
+            self.row, self.seat, self.movie_session.cinema_hall, ValidationError
         )
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         self.full_clean()
         return super(Ticket, self).save(
             force_insert, force_update, using, update_fields
