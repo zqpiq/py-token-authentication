@@ -8,7 +8,6 @@ from user.tests.test_user_api import create_user
 
 
 class PublicActorApiTests(TestCase):
-
     def setUp(self):
         self.client = APIClient()
 
@@ -73,7 +72,6 @@ class PrivateActorApiTests(TestCase):
 
 
 class AdminActorApiTests(TestCase):
-
     def setUp(self):
         Actor.objects.create(first_name="George", last_name="Clooney")
         Actor.objects.create(first_name="Keanu", last_name="Reeves")

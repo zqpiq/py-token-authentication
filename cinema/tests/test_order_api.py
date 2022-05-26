@@ -51,14 +51,9 @@ class PrivateOrderApiTests(TestCase):
             email="user@test.com",
             password="userpass",
         )
-        self.order = Order.objects.create(
-            user=self.another_user
-        )
+        self.order = Order.objects.create(user=self.another_user)
         self.ticket = Ticket.objects.create(
-            movie_session=self.movie_session,
-            row=2,
-            seat=12,
-            order=self.order
+            movie_session=self.movie_session, row=2, seat=12, order=self.order
         )
 
         self.user = create_user(
@@ -105,14 +100,9 @@ class AdminOrderApiTests(TestCase):
             email="user@test.com",
             password="userpass",
         )
-        self.order = Order.objects.create(
-            user=self.another_user
-        )
+        self.order = Order.objects.create(user=self.another_user)
         self.ticket = Ticket.objects.create(
-            movie_session=self.movie_session,
-            row=2,
-            seat=12,
-            order=self.order
+            movie_session=self.movie_session, row=2, seat=12, order=self.order
         )
 
         self.user = create_user(

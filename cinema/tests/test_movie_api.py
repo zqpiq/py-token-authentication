@@ -20,7 +20,6 @@ class PublicMovieApiTests(TestCase):
 
 
 class PrivateMovieApiTests(TestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.drama = Genre.objects.create(
@@ -162,7 +161,6 @@ class PrivateMovieApiTests(TestCase):
 
 
 class AdminMovieApiTests(TestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.drama = Genre.objects.create(
@@ -239,7 +237,6 @@ class AdminMovieApiTests(TestCase):
         self.assertEqual(movies.status_code, status.HTTP_201_CREATED)
         self.assertEqual(db_movies.count(), 2)
         self.assertEqual(db_movies.filter(title="Superman").count(), 1)
-
 
     def test_get_movie(self):
         response = self.client.get("/api/cinema/movies/1/")

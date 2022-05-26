@@ -116,7 +116,6 @@ class PrivateCinemaHallApiTests(TestCase):
 
 
 class AdminCinemaHallApiTests(TestCase):
-
     def setUp(self):
         self.client = APIClient()
         CinemaHall.objects.create(
