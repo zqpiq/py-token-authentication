@@ -1,14 +1,14 @@
-# User Permissions API
+# Token Authentication API
 
 - Read [the guideline](https://github.com/mate-academy/py-task-guideline/blob/main/README.md) before start
 - Download [ModHeader](https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en)
 
-### In this task you will add the functionality of user permissions
+### In this task you will add the functionality of token authentication
 
 1. Create serializers and views to support the following endpoints:
    * `POST api/register/` - You can create here a user
    * `POST api/login/` - You can get a token, if you write the correct data
-   * `POST api/me/` - Information about user and possibility to update information about user
+   * `PATCH api/me/` - Information about user and possibility to update information about user
 
 
 Example:
@@ -26,18 +26,21 @@ Vary: Accept
 }
 ```
 
-2. Create `cinema/permissions.py` with next API access:
+2. By default, all endpoints in API must have the following action limitations depending on the user role:
 
- * Anon: None.
- * IsAuthenticated: list, retrieve.
- * IsAdmin: create, update, partial_update, destroy.
+ * Implement such custom permission class `IsAdminOrIfAuthenticatedReadOnly`.
+
 
 3. Add `authentication_classes` & `permission_classes` for all view classes.
-4. Use mixins for `views.py` with next access:
+
+
+4. Make **only** such actions available for views:
    * `GenreViewSet` - list and create
    * `CinemaHallViewSet` - list and create
    * `ActorViewSet` - list and create 
    * `MovieViewSet` - list, create and retrieve
-   * `MovieSessionViewSet` - without changes
+   * `MovieSessionViewSet` - list, retrieve, create, update, partial_update, delete
    * `OrderViewSet` - list and create
-5. `OrderViewSet` - implements `get_permissions`. This function allows to create an order.
+
+
+5. `OrderViewSet` - We should give the ability for authenticated users to create order
