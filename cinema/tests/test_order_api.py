@@ -6,6 +6,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from cinema.models import Movie, Genre, Actor, CinemaHall, MovieSession, Ticket, Order
+from cinema.serializers import OrderSerializer
 from user.tests.test_user_api import create_user
 
 
@@ -69,6 +70,11 @@ class PrivateOrderApiTests(TestCase):
         self.assertEqual(orders_response.status_code, status.HTTP_200_OK)
         self.assertEqual(orders_response.data["count"], 0)
 
+    def test_create_order(self):
+        orders_response = self.client.post("/api/cinema/orders/", {})
+
+        self.assertEqual(orders_response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class AdminOrderApiTests(TestCase):
     def setUp(self):
@@ -118,3 +124,8 @@ class AdminOrderApiTests(TestCase):
         orders_response = self.client.get("/api/cinema/orders/")
         self.assertEqual(orders_response.status_code, status.HTTP_200_OK)
         self.assertEqual(orders_response.data["count"], 0)
+
+    def test_create_order(self):
+        orders_response = self.client.post("/api/cinema/orders/", {})
+
+        self.assertEqual(orders_response.status_code, status.HTTP_400_BAD_REQUEST)
