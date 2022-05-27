@@ -46,3 +46,5 @@ Vary: Accept
 
 
 5. `OrderViewSet` - We should give the ability for authenticated users to create order
+
+`Note` all tests should are passed. `user/tests` & `cinema/tests`
