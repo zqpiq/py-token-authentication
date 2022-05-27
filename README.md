@@ -31,6 +31,7 @@ Vary: Accept
 2. By default, all endpoints in API must have the following action limitations depending on the user role:
 
  * Implement such custom permission class `IsAdminOrIfAuthenticatedReadOnly`.
+ * Password should have `min_length = 5`
 
 
 3. Add `authentication_classes` & `permission_classes` for all view classes.
