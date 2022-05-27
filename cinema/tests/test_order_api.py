@@ -6,7 +6,6 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from cinema.models import Movie, Genre, Actor, CinemaHall, MovieSession, Ticket, Order
-from cinema.serializers import OrderSerializer
 from user.tests.test_user_api import create_user
 
 
