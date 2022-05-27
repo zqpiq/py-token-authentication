@@ -74,6 +74,21 @@ class PrivateOrderApiTests(TestCase):
 
         self.assertEqual(orders_response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_put_order(self):
+        response = self.client.put(
+            "/api/cinema/orders/1/",
+            {"id": 1},
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_order(self):
+        response = self.client.delete(
+            "/api/cinema/order/1/",
+        )
+        db_actors_id_1 = Order.objects.filter(id=1)
+        self.assertEqual(db_actors_id_1.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
 
 class AdminOrderApiTests(TestCase):
     def setUp(self):
@@ -128,3 +143,18 @@ class AdminOrderApiTests(TestCase):
         orders_response = self.client.post("/api/cinema/orders/", {})
 
         self.assertEqual(orders_response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_put_order(self):
+        response = self.client.put(
+            "/api/cinema/orders/1/",
+            {"id": 1},
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_order(self):
+        response = self.client.delete(
+            "/api/cinema/order/1/",
+        )
+        db_actors_id_1 = Order.objects.filter(id=1)
+        self.assertEqual(db_actors_id_1.count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
