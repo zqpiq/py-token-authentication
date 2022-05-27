@@ -52,7 +52,7 @@ class PublicUserApiTests(TestCase):
     def test_password_too_short(self):
         """Test that the password must be more than 5 characters"""
         payload = {
-            "username": "test user",
+            "username": "testuser",
             "email": "test@test.com",
             "password": "tst",
         }
