@@ -8,8 +8,8 @@
 At this part of the task, we will do authorization by using tokens. The functionality of regular users will be limited so that they cannot add, delete or update other data on the site, besides their orders.  Moreover, only authenticated users will be able to create an order.  Deletion will be prohibited even for the administrator, if only through the admin panel. That's because of  when we're deleting, for example, a genre, the other relationships from other tables won't be deleted
 
 1. Create serializers and views to support the following endpoints:
-   * `POST api/register/` - You can create here a user (password length must be >= 5 symbols)
-   * `POST api/login/` - You can get a token, if you write the correct data
+   * `POST api/user/register/` - You can create here a user (password length must be >= 5 symbols)
+   * `POST api/user/login/` - You can get a token, if you write the correct data
    * `GET/PUT/PATCH api/user/me/` - Information about user and possibility to update information about user
 
 
