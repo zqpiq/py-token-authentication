@@ -1,61 +1,46 @@
-from datetime import datetime
-
+from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.urls import reverse
 
 from rest_framework.test import APIClient
 from rest_framework import status
 
-from cinema.models import Movie, Genre, Actor, CinemaHall, MovieSession, Ticket, Order
+from cinema.models import Ticket, Order
+from cinema.tests.test_movie_session_api import sample_movie_session
 from user.tests.test_user_api import create_user
+
+ORDER_URL = reverse("cinema:order-list")
+
+
+def sample_order(user):
+    return Order.objects.create(user=user)
+
+
+def sample_ticket(order, **params):
+    movie_session = sample_movie_session()
+
+    defaults = {"movie_session": movie_session, "row": 2, "seat": 2, "order": order}
+
+    defaults.update(params)
+
+    return Ticket.objects.create(**defaults)
+
+
+def detail_url(order_id):
+    return reverse("cinema:order-detail", args=[order_id])
 
 
 class PublicOrderApiTests(TestCase):
-    """Test unauthenticated recipe API access"""
-
     def setUp(self):
         self.client = APIClient()
 
     def test_auth_required(self):
-        """Test that authentication is required"""
-        res = self.client.get("http://127.0.0.1:8000/api/cinema/orders/")
+        res = self.client.get(ORDER_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateOrderApiTests(TestCase):
     def setUp(self):
-        self.drama = Genre.objects.create(
-            name="Drama",
-        )
-        self.comedy = Genre.objects.create(
-            name="Comedy",
-        )
-        self.actress = Actor.objects.create(first_name="Kate", last_name="Winslet")
-        self.movie = Movie.objects.create(
-            title="Titanic",
-            description="Titanic description",
-            duration=123,
-        )
-        self.movie.genres.add(self.drama)
-        self.movie.genres.add(self.comedy)
-        self.movie.actors.add(self.actress)
-        self.cinema_hall = CinemaHall.objects.create(
-            name="White",
-            rows=10,
-            seats_in_row=14,
-        )
-        self.movie_session = MovieSession.objects.create(
-            movie=self.movie, cinema_hall=self.cinema_hall, show_time=datetime.now()
-        )
-        self.another_user = create_user(
-            username="user",
-            email="user@test.com",
-            password="userpass",
-        )
-        self.order = Order.objects.create(user=self.another_user)
-        self.ticket = Ticket.objects.create(
-            movie_session=self.movie_session, row=2, seat=12, order=self.order
-        )
-
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -65,66 +50,46 @@ class PrivateOrderApiTests(TestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_get_order(self):
-        orders_response = self.client.get("/api/cinema/orders/")
-        self.assertEqual(orders_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(orders_response.data["count"], 0)
+        order = sample_order(user=self.user)
 
-    def test_create_order(self):
-        orders_response = self.client.post("/api/cinema/orders/", {})
+        sample_ticket(order)
 
-        self.assertEqual(orders_response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.get(ORDER_URL)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_post_order(self):
+        response = self.client.post(ORDER_URL, {})
+
+        self.assertNotEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_retrieve_order(self):
+        order = sample_order(user=self.user)
+        sample_ticket(order)
+
+        response = self.client.get("http://127.0.0.1:8000/api/cinema/orders/1/")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_put_order(self):
-        response = self.client.put(
-            "/api/cinema/orders/1/",
-            {"id": 1},
-        )
+        order = sample_order(user=self.user)
+
+        sample_ticket(order)
+
+        response = self.client.put("http://127.0.0.1:8000/api/cinema/orders/1/", {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_order(self):
-        response = self.client.delete(
-            "/api/cinema/order/1/",
-        )
-        db_actors_id_1 = Order.objects.filter(id=1)
-        self.assertEqual(db_actors_id_1.count(), 1)
+        order = sample_order(user=self.user)
+
+        sample_ticket(order)
+
+        response = self.client.delete("http://127.0.0.1:8000/api/cinema/orders/1/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class AdminOrderApiTests(TestCase):
     def setUp(self):
-        self.drama = Genre.objects.create(
-            name="Drama",
-        )
-        self.comedy = Genre.objects.create(
-            name="Comedy",
-        )
-        self.actress = Actor.objects.create(first_name="Kate", last_name="Winslet")
-        self.movie = Movie.objects.create(
-            title="Titanic",
-            description="Titanic description",
-            duration=123,
-        )
-        self.movie.genres.add(self.drama)
-        self.movie.genres.add(self.comedy)
-        self.movie.actors.add(self.actress)
-        self.cinema_hall = CinemaHall.objects.create(
-            name="White",
-            rows=10,
-            seats_in_row=14,
-        )
-        self.movie_session = MovieSession.objects.create(
-            movie=self.movie, cinema_hall=self.cinema_hall, show_time=datetime.now()
-        )
-        self.another_user = create_user(
-            username="user",
-            email="user@test.com",
-            password="userpass",
-        )
-        self.order = Order.objects.create(user=self.another_user)
-        self.ticket = Ticket.objects.create(
-            movie_session=self.movie_session, row=2, seat=12, order=self.order
-        )
-
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -134,27 +99,23 @@ class AdminOrderApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_get_order(self):
-        orders_response = self.client.get("/api/cinema/orders/")
-        self.assertEqual(orders_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(orders_response.data["count"], 0)
-
-    def test_create_order(self):
-        orders_response = self.client.post("/api/cinema/orders/", {})
-
-        self.assertEqual(orders_response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_put_order(self):
-        response = self.client.put(
-            "/api/cinema/orders/1/",
-            {"id": 1},
+    def test_get_order_when_admin_dont_have_order(self):
+        user = get_user_model().objects.create_user(
+            username="user",
+            email="user@test.com",
+            password="paspassjnf",
         )
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        order = sample_order(user=user)
 
-    def test_delete_order(self):
-        response = self.client.delete(
-            "/api/cinema/order/1/",
-        )
-        db_actors_id_1 = Order.objects.filter(id=1)
-        self.assertEqual(db_actors_id_1.count(), 1)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        sample_ticket(order)
+
+        response = self.client.get(ORDER_URL)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
+
+        self.client.force_authenticate(user=user)
+        response = self.client.get(ORDER_URL)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
