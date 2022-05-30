@@ -18,10 +18,6 @@ def sample_genres(**params):
     return Genre.objects.create(**params)
 
 
-def detail_url(genre_id):
-    return reverse("cinema:genre-detail", args=[genre_id])
-
-
 class PublicGenresApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -79,18 +75,19 @@ class AdminGenreApiTests(TestCase):
     def test_retrieve_genre(self):
         sample_genres()
 
-        response = self.client.get("http://127.0.0.1:8000/api/cinema/genres/1/")
+        response = self.client.get(f"{GENRE_URL}/1/")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_put_genre(self):
         sample_genres()
 
-        response = self.client.put("http://127.0.0.1:8000/api/cinema/genres/1/", {})
+        response = self.client.put(f"{GENRE_URL}/1/", {})
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_genre(self):
         sample_genres()
 
-        response = self.client.delete("http://127.0.0.1:8000/api/cinema/genres/1/")
+        response = self.client.delete(f"{GENRE_URL}/1/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

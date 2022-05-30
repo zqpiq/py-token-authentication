@@ -23,10 +23,6 @@ def sample_cinema_hall(**params):
     return CinemaHall.objects.create(**defaults)
 
 
-def detail_url(cinema_hall_id):
-    return reverse("cinema:cinemahall-detail", args=[cinema_hall_id])
-
-
 class PublicCinemaHallApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -93,21 +89,17 @@ class AdminCinemaHallApiTests(TestCase):
     def test_retrieve_cinema_hall(self):
         sample_cinema_hall()
 
-        response = self.client.get("http://127.0.0.1:8000/api/cinema/cinema_halls/1/")
+        response = self.client.get(f"{CINEMA_HALL_URL}/1/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_put_cinema_hall(self):
         sample_cinema_hall()
 
-        response = self.client.put(
-            "http://127.0.0.1:8000/api/cinema/cinema_halls/1/", {}
-        )
+        response = self.client.put(f"{CINEMA_HALL_URL}/1/", {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_cinema_hall(self):
         sample_cinema_hall()
 
-        response = self.client.delete(
-            "http://127.0.0.1:8000/api/cinema/cinema_halls/1/"
-        )
+        response = self.client.delete(f"{CINEMA_HALL_URL}/1/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

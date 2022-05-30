@@ -21,10 +21,6 @@ def sample_actor(**params):
     return Actor.objects.create(**defaults)
 
 
-def detail_url(actor_id):
-    return reverse("cinema:actor-detail", args=[actor_id])
-
-
 class PublicActorApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -88,18 +84,18 @@ class AdminActorApiTests(TestCase):
     def test_retrieve_actor(self):
         sample_actor()
 
-        response = self.client.get("http://127.0.0.1:8000/api/cinema/actors/1/")
+        response = self.client.get(f"{ACTOR_URL}/1/")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_put_actor(self):
         sample_actor()
 
-        response = self.client.put("http://127.0.0.1:8000/api/cinema/actors/1/", {})
+        response = self.client.put(f"{ACTOR_URL}/1/", {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_actor(self):
         sample_actor()
 
-        response = self.client.delete("http://127.0.0.1:8000/api/cinema/actors/1/")
+        response = self.client.delete(f"{ACTOR_URL}/1/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
