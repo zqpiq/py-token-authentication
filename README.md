@@ -1,6 +1,6 @@
 # Token Authentication API
 
-- Read [the guideline](https://github.com/mate-academy/py-task-guideline/blob/main/README.md) before start
+Read [the guideline](https://github.com/mate-academy/py-task-guideline/blob/main/README.md) before starting.
 - Download [ModHeader](https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en)
 - Use the following command to load prepared data from fixture to test and debug your code:
   `python manage.py loaddata cinema_service_db_data.json`.
@@ -49,3 +49,5 @@ Vary: Accept
 4. `OrderViewSet` - We should give the ability for authenticated users to create order
 
 `Note` all tests should pass. `user/tests` & `cinema/tests`
+
+### Note: Check your code using this [checklist](checklist.md) before pushing your solution.
